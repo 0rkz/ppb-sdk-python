@@ -24,10 +24,12 @@ BOUNDARY — two distinct USDC flows, keep them separate:
       transferFrom. No escrow contract is involved.
   (B) The x402 gateway EIP-3009 payment leg (THIS client), signed at fetch
       time against whatever the 402 names.
-They are INDEPENDENT. In particular the ``fact-oracle`` POST requires a
-``subscriber_address`` that is ALREADY registered on-chain and holds a
-DataStream USDC allowance (a prior ByteClient/Subscriber.subscribe) — flow (A)
-must be done before flow (B) succeeds for that feed.
+They are INDEPENDENT. The live pay-per-call feeds — including the POST verdict
+oracles (address-reputation, sanctions-screen, pkg-verdict, reasoning-verdict,
+positioning-snapshot, liquidation-stream, evidence-pack) — need only flow (B):
+the paid 200 returns the answer in-body with an embedded EIP-712 attestation,
+no prior on-chain subscribe required. Flow (A) is for the on-chain
+publish/subscribe streaming path, not for x402 fetches.
 
 DEPENDENCIES (optional/peer — the heavy x402 stack is NOT a hard install_requires
 of the core SDK; import it lazily here so ``import byte`` works without it):
@@ -48,9 +50,24 @@ from typing import Any, Optional
 PROD_BASE_URL = "https://x402.payperbyte.io"
 LOCAL_BASE_URL = "http://127.0.0.1:3402"
 
-# Feeds the gateway serves over POST with a JSON body (x402-gateway/src/index.ts
-# POST_ORACLES). Everything else is GET.
-POST_ORACLES = frozenset({"fact-oracle", "evidence-pack", "usc-statute"})
+# Feeds the SDK sends over POST-with-a-JSON-body BY DEFAULT — the POST-only
+# verdict/pack oracles. Regenerated 2026-07-03 from the live catalog
+# (GET x402.payperbyte.io/feeds, method==["POST"]) after the feed cut;
+# empirically confirmed (POST-only feeds 405 on GET, 402 on POST).
+# NOT included: the dual GET-digest/POST-verdict feeds `runtime-eol` and
+# `threat-intel` — they answer GET (a digest, no body) AND POST (a verdict,
+# needs input), so they default to GET; pass method="POST" + body for the
+# verdict. GET-only feeds (weather, earthquakes) are also absent. Everything
+# not listed defaults to GET.
+POST_ORACLES = frozenset({
+    "address-reputation",
+    "sanctions-screen",
+    "pkg-verdict",
+    "reasoning-verdict",
+    "positioning-snapshot",
+    "liquidation-stream",
+    "evidence-pack",
+})
 
 # Response header carrying the per-feed disclaimer category (index.ts §14).
 DISCLAIMER_HEADER = "X-BYTE-Disclaimer-Category"
@@ -81,8 +98,12 @@ class GatewayClient:
         account = Account.from_key(private_key)          # NEVER hardcode
         gw = GatewayClient(account=account)              # prod gateway
         catalog = gw.discover()                          # GET /feeds
-        result = gw.fetch_feed("crypto-top100")          # pays via x402
-        print(result["data"], result["settlement"])
+        result = gw.fetch_feed("weather")                # GET feed, pays via x402
+        verdict = gw.fetch_feed("address-reputation",    # POST verdict oracle
+                                body={"domain": "example.com",
+                                      "address": "0x1111111111111111111111111111111111111111",
+                                      "chain": "base"})
+        print(result["data"], verdict["data"], verdict["settlement"])
     """
 
     def __init__(
@@ -177,17 +198,19 @@ class GatewayClient:
         does request -> 402 -> sign EIP-3009 USDC payment -> retry -> paid
         response. NO API key; the wallet signs.
 
-        ``feed_id_or_path`` may be a feed id ('crypto-top100') or a full path
-        ('/feeds/crypto-top100'). POST oracle feeds (fact-oracle, evidence-pack,
-        usc-statute) default to POST with the supplied JSON ``body``; everything
-        else defaults to GET. Pass ``method`` to override.
+        ``feed_id_or_path`` may be a feed id ('address-reputation') or a full
+        path ('/feeds/address-reputation'). The POST-only verdict/pack oracles
+        (see ``POST_ORACLES``) default to POST with the supplied JSON ``body``;
+        the dual GET-digest/POST-verdict feeds (``runtime-eol``, ``threat-intel``)
+        and all other feeds default to GET. Pass ``method`` to override — e.g.
+        ``method="POST", body={...}`` to pull a verdict from a dual feed.
 
-        fact-oracle body shape (per gateway index.ts):
-          { question, subscriber_address (0x, REQUIRED — must already be
-            registered on-chain with a DataStream USDC allowance),
-            max_byte_cost? (int, default 2000) }
-        The on-chain registration + allowance (Subscriber.subscribe) is a
-        SEPARATE prior step; see the module docstring BOUNDARY note.
+        Verdict-oracle body shape (e.g. address-reputation, per gateway
+        index.ts): { domain | url, address (0x), amount? (int atomic), chain?
+        ('base' | 'arbitrum-one') }. The paid 200 embeds an EIP-712
+        PayloadAttestation over the exact answer bytes — recompute keccak256 and
+        recover the signer before acting. Body shapes vary per oracle; see each
+        feed's 402 challenge (its `bazaar.info.input` schema).
 
         Returns:
           { 'data': <parsed body>,
