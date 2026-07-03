@@ -1,0 +1,220 @@
+{
+  "meta": {
+    "note": "Cross-language EIP-712 parity vector. TS (viem) produced; Python (eth_account) must reproduce ts_verdict field-for-field on the decision fields.",
+    "now_seconds": 1750000000,
+    "attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "wrong_attester": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "data_stream": "0x44729bB148F46d8Db509E47b0453edc271e06e95",
+    "chain_id": 421614
+  },
+  "cases": [
+    {
+      "name": "genuine",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": true,
+        "hashMatch": true,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": false,
+        "reason": "received bytes hash-match the attested hash AND the attestation recovers to the named publisher — safe to act"
+      }
+    },
+    {
+      "name": "tampered_body",
+      "body": "{\"asset\":\"BTC\",\"price\":99999,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": false,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": false,
+        "reason": "HASH MISMATCH — the received bytes are NOT what the publisher attested; do not act"
+      }
+    },
+    {
+      "name": "wrong_attester",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": true,
+        "signerMatch": false,
+        "recovered": "0x17D6d3ee10ebd639276A3D12c8F96c1b7d49f159",
+        "expired": false,
+        "reason": "attestation signature did not recover to the named publisher; do not act"
+      }
+    },
+    {
+      "name": "no_attester",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": null,
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": true,
+        "signerMatch": null,
+        "recovered": null,
+        "expired": false,
+        "reason": "no expectedAttester pinned — a self-asserted X-BYTE-Attestation header (its `publisher` field is attacker-controlled) cannot prove provenance; pass the gateway attester address. Fail-closed."
+      }
+    },
+    {
+      "name": "missing_header",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "__NULL__",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": false,
+        "signerMatch": null,
+        "recovered": null,
+        "expired": false,
+        "reason": "no X-BYTE-Attestation header (missing or unparseable) — provenance unproven; fail-closed"
+      }
+    },
+    {
+      "name": "malformed_header",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "not json{",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": false,
+        "signerMatch": null,
+        "recovered": null,
+        "expired": false,
+        "reason": "no X-BYTE-Attestation header (missing or unparseable) — provenance unproven; fail-closed"
+      }
+    },
+    {
+      "name": "rewritten_domain_chainid1",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 1,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": true,
+        "signerMatch": false,
+        "recovered": "0x0f1d84e5a20714f1C35876349f02427F51458248",
+        "expired": false,
+        "reason": "attestation signature did not recover to the named publisher; do not act"
+      }
+    },
+    {
+      "name": "genuine_expired",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1749999990,\"signature\":\"0xd91f8be3c2c4b53deff47bcfd2195cf8d6dce856a1fa1ab4c24e7bcb8263bb951631a0213865e30a61e6b7a9ab9bc509016d346e573078ae728c7f937f05b27c1c\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": true,
+        "hashMatch": true,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": true,
+        "reason": "received bytes hash-match the attested hash AND the attestation recovers to the named publisher — safe to act (note: deadline elapsed; advisory only, provenance is immutable)"
+      }
+    },
+    {
+      "name": "hex_body_valid",
+      "body": "0xdeadbeefcafe0001",
+      "body_encoding": "hex",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0xcbfd110d91be9b574ce5df010729ef9a0b08c5bcc3ce382397aff4e37443c30f\",\"payloadLength\":8,\"deadline\":1750000300,\"signature\":\"0xe4f0aa6b95671dbaf90324ba964b3b15486b3464e7fd3ddd9160ae6a397947ba16475331e0e96f325b777ca4bb47c3c7ee6937eab5f626b188c421fbde66b09c1c\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": true,
+        "hashMatch": true,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": false,
+        "reason": "received bytes hash-match the attested hash AND the attestation recovers to the named publisher — safe to act"
+      }
+    },
+    {
+      "name": "payloadhash_16byte",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0xabababababababababababababababab\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": false,
+        "signerMatch": false,
+        "recovered": null,
+        "expired": false,
+        "reason": "HASH MISMATCH — the received bytes are NOT what the publisher attested; do not act"
+      }
+    },
+    {
+      "name": "payloadhash_empty",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": false,
+        "hashMatch": false,
+        "signerMatch": false,
+        "recovered": null,
+        "expired": false,
+        "reason": "HASH MISMATCH — the received bytes are NOT what the publisher attested; do not act"
+      }
+    },
+    {
+      "name": "header_domain_mismatch",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"EVIL\",\"version\":\"9\",\"chainId\":99999,\"verifyingContract\":\"0xdededededededededededededededededededede\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":47,\"deadline\":1750000300,\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": true,
+        "hashMatch": true,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": false,
+        "reason": "received bytes hash-match the attested hash AND the attestation recovers to the named publisher — safe to act"
+      }
+    },
+    {
+      "name": "string_numerics",
+      "body": "{\"asset\":\"BTC\",\"price\":64000,\"sanctioned\":true}",
+      "body_encoding": "utf8",
+      "header_input": "{\"alg\":\"EIP712-PayloadAttestation\",\"domain\":{\"name\":\"BYTE Library\",\"version\":\"1\",\"chainId\":421614,\"verifyingContract\":\"0x44729bB148F46d8Db509E47b0453edc271e06e95\"},\"publisher\":\"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266\",\"payloadHash\":\"0x9aa94589d379f9ae78d6dab864ca0197b71b9c7b1a0f3280f79f172ac7473019\",\"payloadLength\":\"47\",\"deadline\":\"1750000300\",\"signature\":\"0x0c415bc1213b9839bf71e77f994ee05ea895f681b87f422631524e730a0a692d17182ef8c98badc4a321ba38b9e3656b8fbe6e0c00c1386e1f8ef83f225ffea31b\"}",
+      "net_chain_id": 421614,
+      "expected_attester": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      "ts_verdict": {
+        "verified": true,
+        "hashMatch": true,
+        "signerMatch": true,
+        "recovered": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "expired": false,
+        "reason": "received bytes hash-match the attested hash AND the attestation recovers to the named publisher — safe to act"
+      }
+    }
+  ]
+}

@@ -1,0 +1,341 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_settlementToken",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_schemaRegistry",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_admin",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "deregister",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getPublisher",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct DataRegistryLib.Publisher",
+        "components": [
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "enum DataRegistryLib.PublisherStatus"
+          },
+          {
+            "name": "tier",
+            "type": "uint8",
+            "internalType": "enum DataRegistryLib.Tier"
+          },
+          {
+            "name": "stakedAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sandboxStartTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "registeredAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "subscriberCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "messageCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalRevenue",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lastActiveTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "publicKey",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "slashCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPublisherStatus",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum DataRegistry.PublisherStatus"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSubscriberCount",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "graduateFromSandbox",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "isSandbox",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isSubscribed",
+    "inputs": [
+      {
+        "name": "subscriber",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "publisherCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registerPublisher",
+    "inputs": [
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "publicKey",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "subscribe",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "unsubscribe",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateLastActive",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updatePublicKey",
+    "inputs": [
+      {
+        "name": "newKey",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "PublicKeyUpdated",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newKey",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PublisherRegistered",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "publicKey",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyRegistered",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadySubscribed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotRegistered",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotSubscribed",
+    "inputs": []
+  }
+]

@@ -1,0 +1,432 @@
+[
+  {
+    "type": "function",
+    "name": "deactivateSchema",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getPublisherClass",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.PublisherClass"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSchema",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct SchemaRegistry.Schema",
+        "components": [
+          {
+            "name": "expectedSize",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "maxSize",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "frequencySeconds",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pubClass",
+            "type": "uint8",
+            "internalType": "enum SchemaRegistry.PublisherClass"
+          },
+          {
+            "name": "verType",
+            "type": "uint8",
+            "internalType": "enum SchemaRegistry.VerificationType"
+          },
+          {
+            "name": "methodologyHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "topic",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "pricePerKB",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "registeredAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getVerificationType",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.VerificationType"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isActive",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "methodologyOwner",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registerSchema",
+    "inputs": [
+      {
+        "name": "expectedSize",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "maxSize",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "frequencySeconds",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "pubClass",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.PublisherClass"
+      },
+      {
+        "name": "verType",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.VerificationType"
+      },
+      {
+        "name": "methodologyHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "topic",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "pricePerKB",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "schemaCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "schemas",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "expectedSize",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "maxSize",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "frequencySeconds",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "pubClass",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.PublisherClass"
+      },
+      {
+        "name": "verType",
+        "type": "uint8",
+        "internalType": "enum SchemaRegistry.VerificationType"
+      },
+      {
+        "name": "methodologyHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "topic",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "pricePerKB",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "registeredAt",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "updatePrice",
+    "inputs": [
+      {
+        "name": "newPricePerKB",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "validateAndCalculateFee",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "payloadSize",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "valid",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "SchemaDeactivated",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SchemaRegistered",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "topic",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "pubClass",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "enum SchemaRegistry.PublisherClass"
+      },
+      {
+        "name": "verType",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "enum SchemaRegistry.VerificationType"
+      },
+      {
+        "name": "pricePerKB",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SchemaUpdated",
+    "inputs": [
+      {
+        "name": "publisher",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "pricePerKB",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "InvalidFrequency",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidMaxSize",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidPrice",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MethodologyHashTaken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotSchemaOwner",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PayloadExceedsMaxSize",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "SchemaAlreadyExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "SchemaNotFound",
+    "inputs": []
+  }
+]
