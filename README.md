@@ -1,6 +1,6 @@
 # payperbyte-sdk — PayPerByte Python SDK
 
-Python SDK for PayPerByte (the BYTE Library data layer) — the verified, provenance-first data layer for AI agents. Discover first-party feeds, subscribe, stream payloads, and verify every payload against its on-chain EIP-712 attestation. No token; direct-allowance USDC settlement on Arbitrum.
+Python SDK for PayPerByte — the cryptographically attested, provenance-verifiable data layer for AI agents. Discover first-party feeds, pay per call, subscribe, stream payloads, and verify every payload against its EIP-712 attestation (authenticity + tamper-evidence — who signed these exact bytes — not a correctness guarantee). No token; x402 USDC payments settle on **Base mainnet** (the on-chain subscribe + EIP-712 attestation rail is Arbitrum Sepolia, testnet, pre-audit).
 
 ## Installation
 
@@ -25,6 +25,7 @@ from byte import (
     GatewayClient,
     verify_payload,
     HashMismatchError,
+    CanonicalFormMismatchError,
     ARBITRUM_SEPOLIA,
 )
 
@@ -42,6 +43,7 @@ publishers = await mercat.search(topic="eth-price")
 #    per-message fees directly. No escrow, no deposit: your USDC stays in your
 #    wallet until a message is actually settled. allowance_usdc is a 6-decimal
 #    spend ceiling sized to cover the fees you expect to pay.
+#    (This leg is on Arbitrum Sepolia — testnet, pre-audit.)
 subscriber = Subscriber("0x...private_key...", ARBITRUM_SEPOLIA)
 subscriber.subscribe(publishers[0]["address"], allowance_usdc=10.0)
 
@@ -49,7 +51,7 @@ subscriber.subscribe(publishers[0]["address"], allowance_usdc=10.0)
 async for msg in subscriber.stream():
     payload = fetch_from_my_archive(msg["payload_hash"])
 
-    # 4. Verify — keccak256(canonical bytes) vs the on-chain attested hash.
+    # 4. Verify — keccak256 of the EXACT delivered bytes vs the attested hash.
     #    Throws HashMismatchError if the bytes don't match what was attested.
     try:
         verify_payload(payload, msg["payload_hash"])
@@ -60,51 +62,59 @@ async for msg in subscriber.stream():
 
 ## Keyless x402 (pay-per-call)
 
-The `GatewayClient` mirrors the BYTE x402 gateway. It is **keyless**: a wallet signs the
-payment (EIP-3009 `transferWithAuthorization`, gasless — the facilitator broadcasts and
-pays gas). There is **no API key** anywhere.
+The `GatewayClient` mirrors the PayPerByte x402 gateway. It is **keyless**: a wallet signs
+the payment (EIP-3009 `transferWithAuthorization`, gasless — the facilitator broadcasts and
+pays gas), settled in USDC on Base mainnet. There is **no API key** anywhere.
 
 ```python
 from eth_account import Account
 from byte import GatewayClient
 
 gw = GatewayClient(account=Account.from_key("0x..."))    # defaults to https://x402.payperbyte.io
-result = gw.fetch_feed("crypto-top100")                  # GET -> 402 -> sign USDC -> retry -> data
+result = gw.fetch_feed("weather")                        # GET -> 402 -> sign USDC -> retry -> data
 print(result["data"])
 print(result["settlement"])        # {"success", "payer", "transaction"} (on-chain settle tx) or None
 print(result["disclaimerCategory"])
 ```
 
-POST oracle feeds (`fact-oracle`, `evidence-pack`, `usc-statute`) take a JSON body:
+Verdict oracles are POST feeds that take a JSON body and answer BEFORE you act — a signed
+ALLOW/WARN/BLOCK with an embedded EIP-712 receipt over the exact answer bytes:
 
 ```python
-result = gw.fetch_feed("fact-oracle", body={
-    "question": "What is the current US federal funds rate?",
-    "subscriber_address": "0x...",   # REQUIRED — must already be registered on-chain with a DataStream USDC allowance
+result = gw.fetch_feed("address-reputation", body={
+    "domain": "example.com",                              # the payee's web domain
+    "address": "0x1111111111111111111111111111111111111111",  # receiving address
+    "chain": "base",
 })
+# result["data"]["answer"]["verdict"]  -> "ALLOW" | "WARN" | "BLOCK"
+# result["data"]["attestation"]        -> EIP-712 receipt: recompute keccak256(answer),
+#                                         recover the signer, THEN act
 ```
 
-> **Two distinct USDC flows.** The on-chain settlement leg (Subscriber.subscribe →
-> register in DataRegistry + approve DataStream as a direct USDC spender) is
-> independent of the x402 gateway payment (GatewayClient → EIP-3009 at fetch time).
-> For `fact-oracle`, the subscriber must already be registered with a DataStream
-> allowance *before* the x402 POST succeeds.
+(`pkg-verdict` does the same for software packages.) The verdict is a screening signal —
+the receipt proves who signed these exact bytes, not that the verdict is correct.
+
+> **Two distinct USDC flows.** The on-chain settlement leg (`Subscriber.subscribe` →
+> register in DataRegistry + approve DataStream as a direct USDC spender, Arbitrum
+> Sepolia) is independent of the x402 gateway payment (`GatewayClient` → EIP-3009 USDC
+> on Base at fetch time). Pay-per-call feeds need only the x402 leg.
 
 ## Features
 
 - **Feed discovery** — browse the x402 gateway catalog (`GatewayClient.discover`) or search publishers via the indexer (`Mercat`)
 - **Subscription management** — subscribe, unsubscribe, check status (direct-allowance USDC settlement; the SDK approves DataStream as a direct spender)
 - **Data streaming** — publish and receive payloads via DataStream
-- **Payload verification** — every payload carries an EIP-712 PayloadAttestation; verify `keccak256(canonical bytes)` against the on-chain hash before acting on the data
-- **Keyless x402** — pay-per-call feed access with a wallet (EIP-3009), no API key
+- **Payload verification** — byte-exact `keccak256` against the EIP-712 attested hash, plus a form-aware archive path that fails closed (`CanonicalFormMismatchError`) instead of raising a tamper alarm it cannot prove
+- **Keyless x402** — pay-per-call feed access with a wallet (EIP-3009, USDC on Base), no API key
 - **Provenance** — read publisher status, subscriber/message counts, and revenue from the on-chain registry
 
 ## Network Support
 
-| Network | Chain ID | Status |
-|---------|----------|--------|
-| Arbitrum Sepolia | 421614 | Live (testnet) |
-| Arbitrum One | 42161 | Planned (mainnet, audit-gated) |
+| Network | Chain ID | Role | Status |
+|---------|----------|------|--------|
+| Base | 8453 | x402 USDC payment settlement (`GatewayClient`) | **Live (mainnet)** |
+| Arbitrum Sepolia | 421614 | On-chain subscribe + EIP-712 attestation anchor | Live (testnet, pre-audit) |
+| Arbitrum One | 42161 | Attestation mainnet re-anchor | Planned (audit-gated) |
 
 ## PayPerByte contracts
 
@@ -118,14 +128,29 @@ PayPerByte is a lean 3-contract core. No token; all settlement is in external US
 
 Contract and settlement-USDC addresses are resolved per-network by the SDK (`ARBITRUM_SEPOLIA`, `LOCAL_ANVIL`).
 
-## Canonical payload bytes
+## Canonical payload bytes — two forms, and why byte-exact verification wins
 
-Publish-side and verify-side hashing both use the same canonical form (`byte.canonical`):
-UTF-8 of JSON with recursively lexicographically-sorted object keys and no insignificant
-whitespace. This guarantees `keccak256` parity across the publish/verify boundary **and**
-between the Python and TypeScript SDKs. Keep payload values to strings, bools, and integers
-that round-trip identically across languages (or pre-stringify floats); full RFC-8785/JCS
-float/large-integer normalization is out of scope.
+The primary verify path is **byte-exact**: hash the exact bytes you received
+(`verify_payload`) against the attested hash. That path needs no canonicalization at all
+and is the strongest tamper evidence the SDK offers. Prefer it whenever you hold the
+delivered bytes.
+
+Canonicalization only enters when a payload is *re-serialized* (e.g. re-deriving bytes from
+a parsed archive envelope) — and the stack has **two canonical-JSON forms there, not one**:
+
+- **SDK publish path** (`byte.canonical`): recursively key-sorted, no whitespace,
+  `ensure_ascii=False`. Matches the TypeScript SDK for payloads that keep values to
+  strings/bools/ints; floats, huge ints, and non-BMP keys are explicitly out of scope
+  (this is NOT full RFC 8785/JCS).
+- **First-party live feeds** (`data-feeds`): INSERTION-ORDER compact JSON — a frozen
+  hash-compatibility surface that must never be re-sorted.
+
+A payload signed under one form will not hash-match a re-derivation under the other, so
+`fetch_and_verify` is **form-aware**: it tries the raw response bytes and every known form,
+and if none reproduces the attested hash it raises `CanonicalFormMismatchError` —
+deliberately NOT `HashMismatchError`, because a failed re-serialization cannot distinguish
+tampering from a form mismatch. Fail closed either way: don't consume the payload; fetch
+the exact delivered bytes and use byte-exact `verify_payload`.
 
 ## Modules
 
@@ -133,11 +158,13 @@ float/large-integer normalization is out of scope.
 - `Publisher` — register a feed, publish data, sign EIP-712 PayloadAttestations
 - `Subscriber` — subscribe (register in DataRegistry + approve DataStream as a direct USDC spender), receive payloads, stream events
 - `GatewayClient` — keyless x402 pay-per-call client (a wallet, not an API key)
-- `verify_payload` / `verify_event_payload` / `fetch_and_verify` — subscriber-side payload verification against on-chain attestations
+- `verify_payload` / `verify_event_payload` — byte-exact payload verification against attestations
+- `fetch_and_verify` — archive fetch + form-aware verification (fails closed with `CanonicalFormMismatchError`)
 - `Mercat` — feed search and discovery (connects to the indexer API)
 
 ## Related
 
+- [ppb-sdk](https://github.com/0rkz/ppb-sdk) — the TypeScript sibling of this SDK
 - [byte-mcp-server](https://github.com/0rkz/byte-mcp-server) — MCP server for AI agent integration
 - [byte-x402-gateway](https://github.com/0rkz/byte-x402-gateway) — keyless x402 payment gateway (a wallet, not an API key)
 - [byte-discovery-api](https://github.com/0rkz/byte-discovery-api) — agent discovery endpoint

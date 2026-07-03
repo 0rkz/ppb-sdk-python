@@ -8,7 +8,7 @@ with open(os.path.join(_here, "README.md"), encoding="utf-8") as _f:
 setup(
     name="payperbyte-sdk",
     version="0.2.0",
-    description="Python SDK for PayPerByte — verified, provenance-first data for AI agents. No token; direct-allowance USDC settlement on Arbitrum.",
+    description="Python SDK for PayPerByte — verified, provenance-first data for AI agents. No token; x402 USDC pay-per-call on Base mainnet, EIP-712 attestation verification (authenticity + tamper-evidence, not correctness).",
     long_description=_long_description,
     long_description_content_type="text/markdown",
     packages=["byte"],
